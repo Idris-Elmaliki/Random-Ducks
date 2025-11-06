@@ -1,3 +1,18 @@
 <resources>
     <string name="app_name">RandomDuck_App</string>
+
+    <string name="topBarText">Random Ducks</string>
+    <string name="playButtonText">Press this button to hear a random duck sound!</string>
+
+    <string name="error_title">An Error Occurred</string>
+    <string name="error_message">Something went wrong. Please reload. (Click and Hold on "Error" to see the Error Message)</string>
+    <string name="error_reload">Reload</string>
+
+
+    <string name="loadingText">Loading in the ducks</string>
+    <string name="loadNewImage">Press to load a new random duck</string>
+    <string name="please_hold_text">Please Hold</string>
+
+    <string name="exception_message">"Invalid state"</string>
+    <string name="duck_content_description">Duck Image</string>
 </resources>
