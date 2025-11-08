@@ -8,32 +8,56 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class DuckViewModel(private val repository : DuckRepositories) : ViewModel() {
-    data class DuckUiState(
-        val imageUrl : String? = null,
-        val duckFact : String? = null,
-        val loadingStatus : Boolean = false,
-        val error : String? = null
-    )
+data class DuckUiState(
+    val imageUrl: String? = null,
+    val duckMessage: String? = null,
+    val loadingStatus: Boolean = false,
+    val error: String? = null
+)
+class DuckViewModel(
+    private val repository : DuckRepositories
+) : ViewModel() {
 
     private var _uiState = MutableStateFlow(DuckUiState())
-    val uiState : StateFlow<DuckUiState> = _uiState.asStateFlow()
+    val uiState: StateFlow<DuckUiState> = _uiState.asStateFlow()
+
+    fun getDuck() {
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(loadingStatus = true, error = null)
+            try {
+                val randImage = repository.getRandomPic()
+
+                _uiState.value = DuckUiState(
+                    imageUrl = randImage.url,
+                    duckMessage = randImage.message,
+                    loadingStatus = false,
+                    error = null
+                )
+            } catch (e: Exception) {
+                _uiState.value = _uiState.value.copy(
+                    loadingStatus = false,
+                    error = e.message ?: "Unknown error"
+                )
+            }
+        }
+    }
+
+    init {
+        getDuck()
+    }
 
     fun refreshDuck() {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(loadingStatus = true, error = null)
             try {
-                val funFact = repository.getRandomFact()
                 val randImage = repository.getRandomPic()
 
-                _uiState.value = DuckUiState(
+                _uiState.value = _uiState.value.copy(
                     imageUrl = randImage.url,
-                    duckFact = funFact.fact,
                     loadingStatus = false,
                     error = null
                 )
-            }
-            catch(e : Exception) {
+            } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(
                     loadingStatus = false,
                     error = e.message ?: "Unknown error"
